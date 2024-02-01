@@ -18,7 +18,7 @@ list_to_letters_only <- function(list) {
 links <- list()
 
 # first get all the URLs redirecting to the main dishes 
-for (i in 1:40) {
+for (i in 1:30) {
   url <- sprintf("https://kuchnialidla.pl/przepisy/dania-glowne/%d#lista", i)
   tryCatch(
     {
@@ -51,7 +51,7 @@ recipes <- data.frame(
 
 # iterate through the links 
 # for (i in 1:length(links)) {
-for (i in 1:40) {
+for (i in 1:30) {
   title <-  sub(".*/([^/]+)$", "\\1", links[i])
   recipe <- GET(links[i], user_agent('Hi it is a student project')) %>% content()
   
@@ -80,6 +80,7 @@ for (i in 1:40) {
   recipes <- rbind(recipes, new_row)
 }
 
+# this function returns all exluded products for given diet restriction
 download_exluded_products_for_diet <- function(group_of_products_to_avoid) {
   # iterate over group of products to avoid
   # retrieve specific products (or ingridients) for each group
@@ -100,14 +101,18 @@ download_exluded_products_for_diet <- function(group_of_products_to_avoid) {
   return(all_products_to_avoid)
 }
 
+# create some sample diet restrictions
 vege_avoid_list <- c("wedliny-i-mieso-obiadowe", "wieprzowina", "dziczyzna", "drob-i-ptactwo", "mieso-i-produkty-miesne", "kielbasa", "podroby")
 vegan_avoid_list <- c(vege_avoid_list, "ryby-i-owoce-morza")
 dairy_avoid_list <- c("mleko-i-produkty-mleczne", "ser", "ser-topiony", "ser-w-plasterkach")
 
+# extract products for given diet restrictions
 vege_excluded_products <- download_exluded_products_for_diet(vege_avoid_list)
 vegan_excluded_products <- download_exluded_products_for_diet(vegan_avoid_list)
 dairy_excluded_products <- download_exluded_products_for_diet(dairy_avoid_list)
 
+# this function returns all recipes that qualifies for a user
+# qualification is positive if every product of the recipe is not on restricted products list
 get_all_valid_recipes_for_diet <- function(all_recipes, diet) {
   all_valid_recipes <- data.frame(
     Name = character(),
@@ -129,14 +134,15 @@ get_all_valid_recipes_for_diet <- function(all_recipes, diet) {
   return(all_valid_recipes)
 }
 
+# this function deterimnes if given recipe is valid for provided excluded products list
 is_recipe_valid_for_given_diet <- function(recipe_name, ingredients, excluded_products, fixed_distance) {
   is_valid <- TRUE
   ingredients <- list_to_letters_only(ingredients)
   for (i in 1:length(ingredients)) {
     for (excluded in excluded_products) {
-      lev_dist <- stringdist::stringdist(ingredients[i], excluded, method = "lv")
+      lev_dist <- stringdist::stringdist(ingredients[[i]], excluded, method = "lv")
       if (lev_dist < fixed_distance) {
-        print(sprintf("Recipe %s not valid because: %s, %s. Distance: %d", recipe_name, ingredients[i], excluded, lev_dist))
+        print(sprintf("Recipe %s not valid because it contains: %s, but: %s is marked as forbidden product. Letters differance: %d", recipe_name, ingredients[i], excluded, lev_dist))
         is_valid <- FALSE
       }
     }
@@ -144,6 +150,60 @@ is_recipe_valid_for_given_diet <- function(recipe_name, ingredients, excluded_pr
   return(is_valid);
 }
 
-#get_all_valid_recipes_for_diet(recipes, vege_excluded_products)
-result <- get_all_valid_recipes_for_diet(recipes, vege_excluded_products)
-print(result)
+# sample of valid products for vege diet
+valid_recipes_for_vege <- get_all_valid_recipes_for_diet(recipes, vege_excluded_products)
+
+# this method gets most commonly used products given your diet restrictions (excluded_products)
+# number of returned products is determined by fixed_number_of_products variable
+get_most_valueable_products_for_diet <- function(all_recipes, excluded_products, fixed_number_of_products) {
+  all_valid_recipes <- get_all_valid_recipes_for_diet(recipes, vege_excluded_products)
+  products <- list()
+  for (i in 1:length(all_valid_recipes)) {
+    ingredients <- all_valid_recipes[i, "Ingredients"]
+    ingredients <- list_to_letters_only(ingredients)
+    if(length(ingredients > 0)) {
+      for(j in 1:length(ingredients)) {
+        products <- c(products, ingredients[[j]])
+      }
+    }
+  }
+  products <- sapply(products, as.character)
+  occurences <- table(products)
+  print(occurences)
+  sorted_occurences <- sort(occurences, decreasing = TRUE)
+  top_x_products <- head(sorted_occurences, fixed_number_of_products)
+  return(top_x_products)
+}
+
+# sample of getting most commonly used X products for vege_restriction
+best_products <- get_most_valueable_products_for_diet(recipes, vege_excluded_products, 80)
+print(best_products)
+
+# this method filters only those recipes that you can cook given your available products list
+find_recipes_for_given_products <- function(recipes, available_products) {
+  all_ok_recipe_names <- list()
+  for (i in 1:length(recipes)) {
+    recipe_possible_to_do <- TRUE
+    ingredients <- recipes[i, "Ingredients"]
+    ingredients <- list_to_letters_only(ingredients)
+    ingredients <- sapply(list_to_letters_only(ingredients), as.character)
+    for(j in 1:length(ingredients)) {
+      product_names <- names(available_products)
+      is_in_list <- ingredients[[j]] %in% product_names
+      if(is_in_list == FALSE) {
+        print(sprintf("Recipe %s not valid because it requires: %s", recipes[i, "Name"], ingredients[[j]]))
+        recipe_possible_to_do <- FALSE
+      }
+    }
+    
+    if(recipe_possible_to_do) {
+      all_ok_recipe_names <- c(all_ok_recipe_names, recipes[i, "Name"])
+    }
+  }
+  all_ok_recipe_names <-sapply(all_ok_recipe_names, as.character)
+  return(all_ok_recipe_names)
+}
+
+# samle of recipes possible to cook given list of avialable products
+possible_recipes_from_products <- find_recipes_for_given_products(recipes, best_products)
+print(possible_recipes_from_products)
