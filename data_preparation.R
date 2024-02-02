@@ -15,12 +15,9 @@ list_to_letters_only <- function(list) {
 }
 
 # read the recipes.csv and dairy_excluded_products.csv
-recipes <- read.csv("~/r_projects/web_scraping_project/output/recipes.csv", sep = ";", stringsAsFactors = FALSE)
-dairy_excluded_products <- read.csv("~/r_projects/web_scraping_project/output/dairy_excluded_products.csv", stringsAsFactors = FALSE)
-recipes$Ingredients <- lapply(recipes$Ingredients, function(cell) {
-  cleaned_cell <- gsub("c\\(|\\)", "", cell)
-  unname(unlist(strsplit(cleaned_cell, ', ')))
-})
+recipes <- read.csv("output/recipes.csv", sep = ";", stringsAsFactors = FALSE)
+dairy_excluded_products <- read.csv("output/dairy_excluded_products.csv", stringsAsFactors = FALSE)
+recipes$Ingredients <- lapply(recipes$Ingredients, function(ing) strsplit(ing, ", ")[[1]])
 
 # this function returns all recipes that qualifies for a user
 # qualification is positive if every product of the recipe is not on restricted products list
@@ -73,7 +70,7 @@ valid_recipes_for_dairy_free <- get_all_valid_recipes_for_diet(recipes, dairy_ex
 get_most_valueable_products_for_diet <- function(all_recipes, excluded_products, fixed_number_of_products) {
   all_valid_recipes <- valid_recipes_for_dairy_free
   products <- list()
-  for (i in 1:length(all_valid_recipes)) {
+  for (i in 1:nrow(all_valid_recipes)) {
     ingredients <- all_valid_recipes[i, "Ingredients"]
     ingredients <- list_to_letters_only(ingredients)
     if(length(ingredients > 0)) {
@@ -84,7 +81,7 @@ get_most_valueable_products_for_diet <- function(all_recipes, excluded_products,
   }
   products <- sapply(products, as.character)
   occurences <- table(products)
-  print(occurences)
+  # print(occurences)
   sorted_occurences <- sort(occurences, decreasing = TRUE)
   top_x_products <- head(sorted_occurences, fixed_number_of_products)
   return(top_x_products)
