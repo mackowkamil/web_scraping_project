@@ -1,5 +1,13 @@
 library(stringdist)
 
+# read the recipes.csv and dairy_excluded_products.csv
+recipes <- read.csv("output/recipes.csv", sep = ";", stringsAsFactors = FALSE)
+dairy_excluded_products_test <- read.csv("output/dairy_excluded_products.csv", stringsAsFactors = FALSE)
+recipes$Ingredients <- lapply(recipes$Ingredients, function(cell) {
+  cleaned_cell <- gsub("c\\(|\\)", "", cell)
+  unname(unlist(strsplit(cleaned_cell, ', ')))
+})
+
 # this function returns all recipes that qualifies for a user
 # qualification is positive if every product of the recipe is not on restricted products list
 get_all_valid_recipes_for_diet <- function(all_recipes, diet) {
