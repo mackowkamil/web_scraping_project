@@ -40,15 +40,15 @@ is_recipe_valid_for_given_diet <- function(recipe_name, ingredients, excluded_pr
   return(is_valid);
 }
 
-# sample of valid products for each diet - we will focus on vege diet
-valid_recipes_for_vege <- get_all_valid_recipes_for_diet(recipes, vege_excluded_products)
+# sample of valid products for each diet - we will focus on dairy free diet
+valid_recipes_for_dairy_free <- get_all_valid_recipes_for_diet(recipes, dairy_excluded_products)
+# valid_recipes_for_vege <- get_all_valid_recipes_for_diet(recipes, vege_excluded_products)
 # valid_recipes_for_vegan <- get_all_valid_recipes_for_diet(recipes, vegan_excluded_products)
-# valid_recipes_for_dairyfree <- get_all_valid_recipes_for_diet(recipes, dairy_excluded_products)
 
 # this method gets most commonly used products given your diet restrictions (excluded_products)
 # number of returned products is determined by fixed_number_of_products variable
 get_most_valueable_products_for_diet <- function(all_recipes, excluded_products, fixed_number_of_products) {
-  all_valid_recipes <- valid_recipes_for_vege
+  all_valid_recipes <- valid_recipes_for_dairy_free
   products <- list()
   for (i in 1:length(all_valid_recipes)) {
     ingredients <- all_valid_recipes[i, "Ingredients"]
@@ -68,9 +68,9 @@ get_most_valueable_products_for_diet <- function(all_recipes, excluded_products,
 }
 
 # sample of getting most commonly used X products for each diet
-best_products_vege <- get_most_valueable_products_for_diet(recipes, vege_excluded_products, 80)
+best_products_dairy_free <- get_most_valueable_products_for_diet(recipes, dairy_excluded_products, 80)
+# best_products_vege <- get_most_valueable_products_for_diet(recipes, vege_excluded_products, 80)
 # best_products_vegan <- get_most_valueable_products_for_diet(recipes, vegan_excluded_products, 80)
-# best_products_dairy_free <- get_most_valueable_products_for_diet(recipes, dairy_excluded_products, 80)
 
 # this method filters only those recipes that you can cook given your available products list
 find_recipes_for_given_products <- function(recipes, available_products) {
@@ -98,6 +98,7 @@ find_recipes_for_given_products <- function(recipes, available_products) {
 }
 
 # sample of recipes possible to cook given list of available products
-possible_recipes_from_products_vege <- find_recipes_for_given_products(recipes, best_products_vege)
+possible_recipes_from_products_dairy_free <- find_recipes_for_given_products(recipes, best_products_dairy_free)
+# possible_recipes_from_products_vege <- find_recipes_for_given_products(recipes, best_products_vege)
 # possible_recipes_from_products_vegan <- find_recipes_for_given_products(recipes, best_products_vegan)
-# possible_recipes_from_products_dairy_free <- find_recipes_for_given_products(recipes, best_products_dairy_free)
+
