@@ -1274,19 +1274,23 @@ restrictions</a></h2>
     <div id="toc">
       <ul>
       <li><a href="#introduction" id="toc-introduction"><span class="toc-section-number">1</span> Introduction</a></li>
-      <li><a href="#web-scraping-methodology" id="toc-web-scraping-methodology"><span class="toc-section-number">2</span> Web scraping methodology</a>
-      <ul>
-      <li><a href="#subchapter" id="toc-subchapter"><span class="toc-section-number">2.1</span> Subchapter</a></li>
-      <li><a href="#another" id="toc-another"><span class="toc-section-number">2.2</span> Another</a></li>
-      </ul></li>
-      <li><a href="#chapter-two" id="toc-chapter-two"><span class="toc-section-number">3</span> Chapter TWO</a></li>
+      <li><a href="#web-scraping-methodology" id="toc-web-scraping-methodology"><span class="toc-section-number">2</span> Web scraping
+      methodology</a></li>
+      <li><a href="#extracting-only-valid-recipes" id="toc-extracting-only-valid-recipes"><span class="toc-section-number">3</span> Extracting only valid
+      recipes</a></li>
+      <li><a href="#finding-most-often-used-ingredients-in-the-valid-recipes" id="toc-finding-most-often-used-ingredients-in-the-valid-recipes"><span class="toc-section-number">4</span> Finding most often used
+      ingredients in the valid recipes</a></li>
+      <li><a href="#searching-for-recipes-with-these-products" id="toc-searching-for-recipes-with-these-products"><span class="toc-section-number">5</span> Searching for recipes with
+      these products</a></li>
+      <li><a href="#some-charts" id="toc-some-charts"><span class="toc-section-number">6</span> Some charts (?)</a></li>
+      <li><a href="#conclusions" id="toc-conclusions"><span class="toc-section-number">7</span> Conclusions</a></li>
       </ul>
     </div>
     <div id="postamble" data-toggle="wy-nav-shift" class="status">
                   <p class="author"><span class="glyphicon glyphicon-user"></span> Aleksandra
 Mazij, Kamil Maćków</p>
                         <p class="date"><span class="glyphicon glyphicon-calendar"></span> 02/02/2024
-16:36:01</p>
+17:36:15</p>
           </div>
    </div>
      
@@ -1340,16 +1344,18 @@ retrieving information, ensuring efficiency and accuracy in data
 extraction. The dual approach of automated scraping and manual
 supplementation contributes to the robustness of our data set, providing
 a solid foundation for analysis and potential expansion.</p>
-<p>First 5 dishes of our scraped <strong>recipes</strong> data
-frame:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">head</span>(recipes<span class="sc">$</span>Name, <span class="dv">5</span>)</span></code></pre></div>
+<ul>
+<li>First 3 dishes of our scraped <strong>recipes</strong> data
+frame:</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">head</span>(recipes<span class="sc">$</span>Name, <span class="dv">3</span>)</span></code></pre></div>
 <pre><code>[1] &quot;nalesniki-ze-szpinakiem-i-serem-saint-felicien&quot;
 [2] &quot;klopsiki-wolowo-wieprzowe-w-stylu-szwedzkim&quot;   
-[3] &quot;racuchy-na-maslance&quot;                           
-[4] &quot;gnocchi-z-kurczakiem-i-warzywami&quot;              
-[5] &quot;obiad-jednoblaszkowy-z-tofu&quot;                   </code></pre>
-<p>And respective 5 ingredients lists:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">head</span>(recipes<span class="sc">$</span>Ingredients, <span class="dv">5</span>)</span></code></pre></div>
+[3] &quot;racuchy-na-maslance&quot;                           </code></pre>
+<ul>
+<li>Respective 3 ingredients lists:</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">head</span>(recipes<span class="sc">$</span>Ingredients, <span class="dv">3</span>)</span></code></pre></div>
 <pre><code>[[1]]
  [1] &quot;jajko&quot;              &quot;mleko&quot;              &quot;mąka pszenna&quot;      
  [4] &quot;sól&quot;                &quot;oliwa z oliwek&quot;     &quot;szpinak świeży&quot;    
@@ -1375,71 +1381,70 @@ frame:</p>
 [[3]]
  [1] &quot;jabłko&quot;           &quot;sok z cytryny&quot;    &quot;mąka pszenna&quot;     &quot;soda oczyszczona&quot;
  [5] &quot;cukier puder&quot;     &quot;sól&quot;              &quot;maślanka&quot;         &quot;jajko&quot;           
- [9] &quot;olej&quot;             &quot;cukier puder&quot;    
-
-[[4]]
- [1] &quot;gnocchi&quot;                   &quot;cebula&quot;                   
- [3] &quot;czosnek główka&quot;            &quot;oliwa z oliwek&quot;           
- [5] &quot;pierś z kurczaka&quot;          &quot;warzywa&quot;                  
- [7] &quot;mrożone&quot;                   &quot;szpinak świeży&quot;           
- [9] &quot;koncentrat pomidorowy&quot;     &quot;bulion&quot;                   
-[11] &quot;piramidka smaku do rosołu&quot; &quot;śmietanka kremówka 30%&quot;   
-[13] &quot;zioła włoskie&quot;             &quot;mąka ziemniaczana&quot;        
-[15] &quot;woda&quot;                      &quot;parmezan tarty&quot;           
-[17] &quot;sól&quot;                       &quot;pieprz czarny&quot;            
-[19] &quot;natka pietruszki&quot;          &quot;parmezan tarty&quot;           
-
-[[5]]
- [1] &quot;tofu&quot;                    &quot;wędzone&quot;                
- [3] &quot;sos sojowy&quot;              &quot;syrop klonowy&quot;          
- [5] &quot;oliwa z oliwek&quot;          &quot;papryka wędzona mielona&quot;
- [7] &quot;chili mielone&quot;           &quot;przecier pomidorowy&quot;    
- [9] &quot;ząbek czosnku&quot;           &quot;bulion warzywny&quot;        
-[11] &quot;śliwka suszona&quot;          &quot;ocet jabłkowy&quot;          
-[13] &quot;syrop klonowy&quot;           &quot;sos sriracha&quot;           
-[15] &quot;sos sojowy&quot;              &quot;sól&quot;                    
-[17] &quot;pieprz czarny&quot;           &quot;brukselka&quot;              
-[19] &quot;batat&quot;                   &quot;ziemniak&quot;               
-[21] &quot;jabłko&quot;                  &quot;jarmuż&quot;                 
-[23] &quot;rozmaryn suszony&quot;        &quot;parmezan tarty&quot;         
-[25] &quot;sól&quot;                     &quot;orzech pekan&quot;           
-[27] &quot;natka pietruszki&quot;       </code></pre>
-<div id="subchapter" class="section level2" number="2.1">
-<h2><span class="header-section-number">2.1</span> Subchapter</h2>
-<p>Mark up text:</p>
+ [9] &quot;olej&quot;             &quot;cukier puder&quot;    </code></pre>
 <ul>
-<li>italic type: <em>this is the first</em>, and this is the <em>second
-award</em>.</li>
-<li>bold type: <strong>this is the first</strong>, and this is the
-<strong>second award</strong>.</li>
+<li>Some 3 restricted ingredients for a dairy free person</li>
 </ul>
-<div id="some-bullet-points" class="section level3" number="2.1.1">
-<h3><span class="header-section-number">2.1.1</span> Some bullet
-points</h3>
-<p>List</p>
-<ul>
-<li>item 1</li>
-<li>item 2</li>
-<li>item 3</li>
-</ul>
-<p>Or maybe this?</p>
-<ol style="list-style-type: decimal">
-<li>point 1</li>
-<li>point 2</li>
-<li>point 3</li>
-</ol>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">head</span>(dairy_excluded_products, <span class="dv">3</span>)</span></code></pre></div>
+<pre><code>                x
+1           mleko
+2 mleko migdałowe
+3   serek wiejski</code></pre>
 </div>
+<div id="extracting-only-valid-recipes" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Extracting only valid
+recipes</h1>
+<p>Taking restricted products into account for a specific diet, we
+successfully excluded recipes containing those items using the
+<strong>stringdist</strong> function. Upon reviewing the remaining valid
+recipes, it is evident that the exclusion process was effective,
+yielding the desired outcomes. The next step involves identifying the
+most frequently occurring ingredients among these validated recipes.
+Here are some of the recipes valid for a person who doesn’t consume
+dairy:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">head</span>(valid_recipes_for_dairy_free<span class="sc">$</span>Name, <span class="dv">5</span>)</span></code></pre></div>
+<pre><code>[1] &quot;weganski-lunchbox-do-pracy&quot;          
+[2] &quot;makaron-chow-mein-z-woka&quot;            
+[3] &quot;fasolka-z-zurawinowo-ziolowym-maslem&quot;
+[4] &quot;kaczka-z-chrupiaca-skorka&quot;           
+[5] &quot;weganska-pieczen-z-dyni&quot;             </code></pre>
 </div>
-<div id="another" class="section level2" number="2.2">
-<h2><span class="header-section-number">2.2</span> Another</h2>
+<div id="finding-most-often-used-ingredients-in-the-valid-recipes" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Finding most often used
+ingredients in the valid recipes</h1>
+<p>In order to create a shopping list for a person with certain dietary
+restrictions…</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">head</span>(best_products_dairy_free, <span class="dv">15</span>)</span></code></pre></div>
+<pre><code>products
+                 sól        ząbek czosnku        sok z cytryny 
+                   8                    5                    4 
+          sos sojowy     cukier trzcinowy              cytryna 
+                   4                    3                    3 
+    natka pietruszki       oliwa z oliwek komosa ryżowa quinoa 
+                   3                    3                    2 
+               masło        pieprz czarny             aquafaba 
+                   2                    2                    1 
+               batat       bazylia świeża            brukselka 
+                   1                    1                    1 </code></pre>
 </div>
+<div id="searching-for-recipes-with-these-products" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Searching for recipes
+with these products</h1>
+<p>….</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">head</span>(possible_recipes_from_products_dairy_free, <span class="dv">15</span>)</span></code></pre></div>
+<pre><code>[1] &quot;weganski-lunchbox-do-pracy&quot;                            
+[2] &quot;makaron-chow-mein-z-woka&quot;                              
+[3] &quot;fasolka-z-zurawinowo-ziolowym-maslem&quot;                  
+[4] &quot;kaczka-z-chrupiaca-skorka&quot;                             
+[5] &quot;weganska-pieczen-z-dyni&quot;                               
+[6] &quot;kasza-gryczana-z-podsmazana-marchewka&quot;                 
+[7] &quot;wontony-z-kurczakiem-i-pikantnym-aromatyzowanym-olejem&quot;</code></pre>
 </div>
-<div id="chapter-two" class="section level1" number="3">
-<h1><span class="header-section-number">3</span> Chapter TWO</h1>
-<p>Or perhaps you would like to highlight the highest value from the
-<code>hp</code> column in the description? The maximum, i.e.,
-<code>x</code> horsepower, is observed in a car in row
-<code>y</code>.</p>
+<div id="some-charts" class="section level1" number="6">
+<h1><span class="header-section-number">6</span> Some charts (?)</h1>
+</div>
+<div id="conclusions" class="section level1" number="7">
+<h1><span class="header-section-number">7</span> Conclusions</h1>
 </div>
 </div>
 
