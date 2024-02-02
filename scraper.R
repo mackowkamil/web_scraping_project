@@ -2,6 +2,7 @@ library(rvest)
 library(httr)
 library(stringdist)
 
+# helper functions 
 to_letters_only <- function(input_string) {
   modified_string <- gsub("[^a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ ]", "", input_string)
   return(modified_string)
