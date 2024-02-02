@@ -136,3 +136,7 @@ dairy_excluded_products <- c(dairy_excluded_products, "śmietanka kremówka 30%"
                              "sos tzatziki", "serek grani", "grana padano", "ser graviera, tarty", "śmietana 12%", "ser scamorza", "śmietana 22%",
                              "ser mascarpone", "ser żółty w plastrach", "ser halloumi", "ser gruyere", "ser maślany, plastry", "cremé fraîche",
                              "śmietana 36%", "ser brie", "ser pont", "ser chaource","ser kolumb", "ser twaróg półtłusty")
+
+# write data to csv files
+write.table(recipes, "output/recipes.csv", sep = ";", row.names = FALSE)
+write.csv(unlist(dairy_excluded_products), "output/dairy_excluded_products.csv", row.names = FALSE)
