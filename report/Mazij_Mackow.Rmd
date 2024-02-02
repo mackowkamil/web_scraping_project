@@ -27,7 +27,11 @@ opts_chunk$set(echo = TRUE,
 opts_knit$set(width = 80)
 ```
 
+```{r, code = readLines("../data_preparation.R"), include=FALSE}
+```
+
 To use this template, install the package: `install.packages("rmdformats")`
+
 
 # Introduction
 
@@ -37,6 +41,7 @@ To get the restricted products we also scraped a website containing dietary info
 
 The outcome of our scraper is a data frame of "allowed" recipes, ensuring compliance with specific dietary needs. Our script then identifies common ingredients across these recipes to create a streamlined and personalized shopping list. This approach not only caters to individual dietary preferences but also enhances the efficiency of meal planning, offering a user-friendly solution at the intersection of technology and nutrition.
 
+
 # Web scraping methodology
 
 The web scraping part of our project was executed through the dedicated script **scraper.R**. In its initial phase, the script gathered URLs for the recipes sub-domains. Focusing exclusively on main dishes for the current project scope, we navigated through these links to compile an exhaustive data set. Following the acquisition of main dish link addresses, we proceeded to extract essential details such as ingredients and macro information (which wasn't used in this project but may be useful in case of a future further development).
@@ -45,49 +50,47 @@ Subsequently, our script extended its capabilities to scrape information on rest
 
 Throughout this process, GET() served as the main function for retrieving information, ensuring efficiency and accuracy in data extraction. The dual approach of automated scraping and manual supplementation contributes to the robustness of our data set, providing a solid foundation for analysis and potential expansion.
 
-```{r, include=FALSE}
-recipes <- read.csv("../output/recipes.csv", sep = ";", stringsAsFactors = FALSE)
-dairy_excluded_products_test <- read.csv("../output/dairy_excluded_products.csv", stringsAsFactors = FALSE)
-recipes$Ingredients <- lapply(recipes$Ingredients, function(cell) {
-  cleaned_cell <- gsub("c\\(|\\)", "", cell)
-  unname(unlist(strsplit(cleaned_cell, ', ')))
-})
-```
-
-First 3 dishes of our scraped **recipes** data frame:
+- First 3 dishes of our scraped **recipes** data frame:
 ```{r}
 head(recipes$Name, 3)
 ```
 
-And respective 3 ingredients lists:
+- Respective 3 ingredients lists:
 ```{r}
 head(recipes$Ingredients, 3)
 ```
 
+- Some 3 restricted ingredients for a dairy free person
+```{r}
+head(dairy_excluded_products, 3)
+```
 
-## Subchapter
 
-Mark up text:
+# Extracting only valid recipes 
 
--   italic type: *this is the first*, and this is the *second award*.
--   bold type: **this is the first**, and this is the **second award**.
+Taking restricted products into account for a specific diet, we successfully excluded recipes containing those items using the **stringdist** function. Upon reviewing the remaining valid recipes, it is evident that the exclusion process was effective, yielding the desired outcomes. The next step involves identifying the most frequently occurring ingredients among these validated recipes. Here are some of the recipes valid for a person who doesn't consume dairy:
 
-### Some bullet points
+```{r}
+head(valid_recipes_for_dairy_free$Name, 5)
+```
 
-List
 
--   item 1
--   item 2
--   item 3
+# Finding most often used ingredients in the valid recipes
 
-Or maybe this?
+In order to create a shopping list for a person with certain dietary restrictions...
 
-1.  point 1
-2.  point 2
-3.  point 3
+```{r}
+head(best_products_dairy_free, 15)
+```
 
-## Another
 
-# Chapter TWO
+# Searching for recipes with these products
 
-Or perhaps you would like to highlight the highest value from the `hp` column in the description? The maximum, i.e., `x` horsepower, is observed in a car in row `y`.
+....
+```{r}
+head(possible_recipes_from_products_dairy_free, 15)
+```
+
+# Some charts (?)
+
+# Conclusions

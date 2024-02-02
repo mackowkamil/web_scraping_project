@@ -1,8 +1,22 @@
 library(stringdist)
 
+# helper functions
+to_letters_only <- function(input_string) {
+  modified_string <- gsub("[^a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ ]", "", input_string)
+  return(modified_string)
+}
+
+list_to_letters_only <- function(list) {
+  new_list <- list()
+  for (elem in list) {
+    new_list <- c(new_list, to_letters_only(elem))
+  }
+  return(new_list)
+}
+
 # read the recipes.csv and dairy_excluded_products.csv
-recipes <- read.csv("output/recipes.csv", sep = ";", stringsAsFactors = FALSE)
-dairy_excluded_products_test <- read.csv("output/dairy_excluded_products.csv", stringsAsFactors = FALSE)
+recipes <- read.csv("~/r_projects/web_scraping_project/output/recipes.csv", sep = ";", stringsAsFactors = FALSE)
+dairy_excluded_products <- read.csv("~/r_projects/web_scraping_project/output/dairy_excluded_products.csv", stringsAsFactors = FALSE)
 recipes$Ingredients <- lapply(recipes$Ingredients, function(cell) {
   cleaned_cell <- gsub("c\\(|\\)", "", cell)
   unname(unlist(strsplit(cleaned_cell, ', ')))
@@ -22,7 +36,7 @@ get_all_valid_recipes_for_diet <- function(all_recipes, diet) {
     stringsAsFactors = FALSE
   )
   for (i in 1:nrow(all_recipes)) {
-    if (i%%100 == 0) {print(sprintf("%s percent of the recipes are processed", round(100 * i/nrow(all_recipes), digits=0)))}
+    # if (i%%100 == 0) {print(sprintf("%s percent of the recipes are processed", round(100 * i/nrow(all_recipes), digits=0)))}
     is_valid <- is_recipe_valid_for_given_diet(all_recipes[i, "Name"], all_recipes[i, "Ingredients"], diet, 2)
     if(is_valid) {
       all_valid_recipes <- rbind(all_valid_recipes, all_recipes[i, ])
@@ -36,10 +50,11 @@ get_all_valid_recipes_for_diet <- function(all_recipes, diet) {
 is_recipe_valid_for_given_diet <- function(recipe_name, ingredients, excluded_products, fixed_distance) {
   is_valid <- TRUE
   ingredients <- list_to_letters_only(ingredients)
+  ingredients
   for (i in 1:length(ingredients)) {
     for (excluded in excluded_products) {
       lev_dist <- stringdist::stringdist(ingredients[[i]], excluded, method = "lv")
-      if (lev_dist < fixed_distance) {
+      if (any(lev_dist < fixed_distance)) {
         # print(sprintf("Recipe %s not valid because it contains: %s, but: %s is marked as forbidden product. Letters differance: %d", recipe_name, ingredients[i], excluded, lev_dist))
         is_valid <- FALSE
       }
