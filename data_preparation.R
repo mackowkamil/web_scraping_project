@@ -15,8 +15,8 @@ list_to_letters_only <- function(list) {
 }
 
 # read the recipes.csv and dairy_excluded_products.csv
-recipes <- read.csv("output/recipes.csv", sep = ";", stringsAsFactors = FALSE)
-dairy_excluded_products <- read.csv("output/dairy_excluded_products.csv", stringsAsFactors = FALSE)
+recipes <- read.csv("~/r_projects/web_scraping_project/output/recipes.csv", sep = ";", stringsAsFactors = FALSE)
+dairy_excluded_products <- read.csv("~/r_projects/web_scraping_project/output/dairy_excluded_products.csv", stringsAsFactors = FALSE)
 recipes$Ingredients <- lapply(recipes$Ingredients, function(cell) {
   cleaned_cell <- gsub("c\\(|\\)", "", cell)
   unname(unlist(strsplit(cleaned_cell, ', ')))
@@ -36,7 +36,7 @@ get_all_valid_recipes_for_diet <- function(all_recipes, diet) {
     stringsAsFactors = FALSE
   )
   for (i in 1:nrow(all_recipes)) {
-    if (i%%100 == 0) {print(sprintf("%s percent of the recipes are processed", round(100 * i/nrow(all_recipes), digits=0)))}
+    # if (i%%100 == 0) {print(sprintf("%s percent of the recipes are processed", round(100 * i/nrow(all_recipes), digits=0)))}
     is_valid <- is_recipe_valid_for_given_diet(all_recipes[i, "Name"], all_recipes[i, "Ingredients"], diet, 2)
     if(is_valid) {
       all_valid_recipes <- rbind(all_valid_recipes, all_recipes[i, ])
