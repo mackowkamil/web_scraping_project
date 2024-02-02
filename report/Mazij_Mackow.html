@@ -1273,19 +1273,20 @@ restrictions</h1>
 restrictions</a></h2>
     <div id="toc">
       <ul>
-      <li><a href="#chapter-one" id="toc-chapter-one"><span class="toc-section-number">1</span> Chapter ONE</a>
+      <li><a href="#introduction" id="toc-introduction"><span class="toc-section-number">1</span> Introduction</a></li>
+      <li><a href="#web-scraping-methodology" id="toc-web-scraping-methodology"><span class="toc-section-number">2</span> Web scraping methodology</a>
       <ul>
-      <li><a href="#subchapter" id="toc-subchapter"><span class="toc-section-number">1.1</span> Subchapter</a></li>
-      <li><a href="#another" id="toc-another"><span class="toc-section-number">1.2</span> Another</a></li>
+      <li><a href="#subchapter" id="toc-subchapter"><span class="toc-section-number">2.1</span> Subchapter</a></li>
+      <li><a href="#another" id="toc-another"><span class="toc-section-number">2.2</span> Another</a></li>
       </ul></li>
-      <li><a href="#chapter-two" id="toc-chapter-two"><span class="toc-section-number">2</span> Chapter TWO</a></li>
+      <li><a href="#chapter-two" id="toc-chapter-two"><span class="toc-section-number">3</span> Chapter TWO</a></li>
       </ul>
     </div>
     <div id="postamble" data-toggle="wy-nav-shift" class="status">
                   <p class="author"><span class="glyphicon glyphicon-user"></span> Aleksandra
 Mazij, Kamil Maćków</p>
-                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 02/01/2024
-19:43:06</p>
+                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 02/02/2024
+16:36:01</p>
           </div>
    </div>
      
@@ -1297,32 +1298,114 @@ Mazij, Kamil Maćków</p>
 <div id="main">
 <p>To use this template, install the package:
 <code>install.packages(&quot;rmdformats&quot;)</code></p>
-<div id="chapter-one" class="section level1" number="1">
-<h1><span class="header-section-number">1</span> Chapter ONE</h1>
-<p>To assess the project, please submit the following files - of course,
-compress them beforehand (you can use, for example, the free 7-zip):</p>
-<ul>
-<li><code>scraper.R</code> file and other files that were used to scrape
-data (e.g., <code>function.R</code>) or to clean them
-(<code>munging.R</code>).</li>
-<li>The data obtained through web scraping (uncleaned) as well as the
-data that have been prepared for writing the report. These data should
-be saved in <code>CSV</code> files.</li>
-<li><code>Surname.Rmd</code> file, which was the basis for preparing the
-report.</li>
-<li>An <code>HTML</code> file that was created by compiling the Rmd
-file.</li>
-<li>Note: everything must be done in R.</li>
-</ul>
-<p>Remember to load the necessary packages at the very beginning. Write
-R codes in so-called chunks. To add them, you can use the shortcut:
-CTRL+ALT+I</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># library(tidyverse) elon &lt;- read_csv(&#39;dane/twitterElonMusk.csv&#39;) head(elon)</span></span></code></pre></div>
-<p>Let’s creat a chart.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># kable(mtcars[1:5, ]) ggplot(mtcars, aes(x = mpg, y = qsec)) + theme_bw() +</span></span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="co"># geom_point(size = 4)</span></span></code></pre></div>
-<div id="subchapter" class="section level2" number="1.1">
-<h2><span class="header-section-number">1.1</span> Subchapter</h2>
+<div id="introduction" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p>In response to the increasing need for personalized nutrition, our
+project focuses on developing a practical solution for individuals with
+dietary restrictions. Using web scraping techniques, we gather a diverse
+range of recipes from
+<code>https://kuchnialidla.pl/przepisy/dania-glowne</code> and filter
+out those containing restricted products.</p>
+<p>To get the restricted products we also scraped a website containing
+dietary information: <code>https://www.tabelakalorii.net/zywnosc</code>.
+As the lists were not matching fully with all the ingredients used in
+our recipes, we had to add some keywords manually to the set of
+restricted products.</p>
+<p>The outcome of our scraper is a data frame of “allowed” recipes,
+ensuring compliance with specific dietary needs. Our script then
+identifies common ingredients across these recipes to create a
+streamlined and personalized shopping list. This approach not only
+caters to individual dietary preferences but also enhances the
+efficiency of meal planning, offering a user-friendly solution at the
+intersection of technology and nutrition.</p>
+</div>
+<div id="web-scraping-methodology" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Web scraping
+methodology</h1>
+<p>The web scraping part of our project was executed through the
+dedicated script <strong>scraper.R</strong>. In its initial phase, the
+script gathered URLs for the recipes sub-domains. Focusing exclusively
+on main dishes for the current project scope, we navigated through these
+links to compile an exhaustive data set. Following the acquisition of
+main dish link addresses, we proceeded to extract essential details such
+as ingredients and macro information (which wasn’t used in this project
+but may be useful in case of a future further development).</p>
+<p>Subsequently, our script extended its capabilities to scrape
+information on restricted products from another website. Additionally,
+we manually incorporated some products. It’s noteworthy that the
+manually added lists did not align perfectly with all the ingredients
+utilized in our recipes.</p>
+<p>Throughout this process, GET() served as the main function for
+retrieving information, ensuring efficiency and accuracy in data
+extraction. The dual approach of automated scraping and manual
+supplementation contributes to the robustness of our data set, providing
+a solid foundation for analysis and potential expansion.</p>
+<p>First 5 dishes of our scraped <strong>recipes</strong> data
+frame:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">head</span>(recipes<span class="sc">$</span>Name, <span class="dv">5</span>)</span></code></pre></div>
+<pre><code>[1] &quot;nalesniki-ze-szpinakiem-i-serem-saint-felicien&quot;
+[2] &quot;klopsiki-wolowo-wieprzowe-w-stylu-szwedzkim&quot;   
+[3] &quot;racuchy-na-maslance&quot;                           
+[4] &quot;gnocchi-z-kurczakiem-i-warzywami&quot;              
+[5] &quot;obiad-jednoblaszkowy-z-tofu&quot;                   </code></pre>
+<p>And respective 5 ingredients lists:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">head</span>(recipes<span class="sc">$</span>Ingredients, <span class="dv">5</span>)</span></code></pre></div>
+<pre><code>[[1]]
+ [1] &quot;jajko&quot;              &quot;mleko&quot;              &quot;mąka pszenna&quot;      
+ [4] &quot;sól&quot;                &quot;oliwa z oliwek&quot;     &quot;szpinak świeży&quot;    
+ [7] &quot;masło&quot;              &quot;gałka muszkatołowa&quot; &quot;sól&quot;               
+[10] &quot;pieprz czarny&quot;      &quot;ser saint&quot;         
+
+[[2]]
+ [1] &quot;mięso mielone wołowe&quot;    &quot;mięso mielone wieprzowe&quot;
+ [3] &quot;cebula&quot;                  &quot;ząbek czosnku&quot;          
+ [5] &quot;żurawina suszona&quot;        &quot;cytryna&quot;                
+ [7] &quot;bułka tarta&quot;             &quot;sól&quot;                    
+ [9] &quot;pieprz czarny&quot;           &quot;olej słonecznikowy&quot;     
+[11] &quot;cebula&quot;                  &quot;ząbek czosnku&quot;          
+[13] &quot;bulion wołowy&quot;           &quot;śmietana 30%&quot;           
+[15] &quot;musztarda dijon&quot;         &quot;mąka pszenna&quot;           
+[17] &quot;natka pietruszki&quot;        &quot;kapar&quot;                  
+[19] &quot;sól&quot;                     &quot;seler&quot;                  
+[21] &quot;ziemniak&quot;                &quot;mleko&quot;                  
+[23] &quot;śmietana&quot;                &quot;masło&quot;                  
+[25] &quot;sól&quot;                     &quot;pieprz biały&quot;           
+[27] &quot;cytryna&quot;                 &quot;natka pietruszki&quot;       
+
+[[3]]
+ [1] &quot;jabłko&quot;           &quot;sok z cytryny&quot;    &quot;mąka pszenna&quot;     &quot;soda oczyszczona&quot;
+ [5] &quot;cukier puder&quot;     &quot;sól&quot;              &quot;maślanka&quot;         &quot;jajko&quot;           
+ [9] &quot;olej&quot;             &quot;cukier puder&quot;    
+
+[[4]]
+ [1] &quot;gnocchi&quot;                   &quot;cebula&quot;                   
+ [3] &quot;czosnek główka&quot;            &quot;oliwa z oliwek&quot;           
+ [5] &quot;pierś z kurczaka&quot;          &quot;warzywa&quot;                  
+ [7] &quot;mrożone&quot;                   &quot;szpinak świeży&quot;           
+ [9] &quot;koncentrat pomidorowy&quot;     &quot;bulion&quot;                   
+[11] &quot;piramidka smaku do rosołu&quot; &quot;śmietanka kremówka 30%&quot;   
+[13] &quot;zioła włoskie&quot;             &quot;mąka ziemniaczana&quot;        
+[15] &quot;woda&quot;                      &quot;parmezan tarty&quot;           
+[17] &quot;sól&quot;                       &quot;pieprz czarny&quot;            
+[19] &quot;natka pietruszki&quot;          &quot;parmezan tarty&quot;           
+
+[[5]]
+ [1] &quot;tofu&quot;                    &quot;wędzone&quot;                
+ [3] &quot;sos sojowy&quot;              &quot;syrop klonowy&quot;          
+ [5] &quot;oliwa z oliwek&quot;          &quot;papryka wędzona mielona&quot;
+ [7] &quot;chili mielone&quot;           &quot;przecier pomidorowy&quot;    
+ [9] &quot;ząbek czosnku&quot;           &quot;bulion warzywny&quot;        
+[11] &quot;śliwka suszona&quot;          &quot;ocet jabłkowy&quot;          
+[13] &quot;syrop klonowy&quot;           &quot;sos sriracha&quot;           
+[15] &quot;sos sojowy&quot;              &quot;sól&quot;                    
+[17] &quot;pieprz czarny&quot;           &quot;brukselka&quot;              
+[19] &quot;batat&quot;                   &quot;ziemniak&quot;               
+[21] &quot;jabłko&quot;                  &quot;jarmuż&quot;                 
+[23] &quot;rozmaryn suszony&quot;        &quot;parmezan tarty&quot;         
+[25] &quot;sól&quot;                     &quot;orzech pekan&quot;           
+[27] &quot;natka pietruszki&quot;       </code></pre>
+<div id="subchapter" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Subchapter</h2>
 <p>Mark up text:</p>
 <ul>
 <li>italic type: <em>this is the first</em>, and this is the <em>second
@@ -1330,8 +1413,8 @@ award</em>.</li>
 <li>bold type: <strong>this is the first</strong>, and this is the
 <strong>second award</strong>.</li>
 </ul>
-<div id="some-bullet-points" class="section level3" number="1.1.1">
-<h3><span class="header-section-number">1.1.1</span> Some bullet
+<div id="some-bullet-points" class="section level3" number="2.1.1">
+<h3><span class="header-section-number">2.1.1</span> Some bullet
 points</h3>
 <p>List</p>
 <ul>
@@ -1347,12 +1430,12 @@ points</h3>
 </ol>
 </div>
 </div>
-<div id="another" class="section level2" number="1.2">
-<h2><span class="header-section-number">1.2</span> Another</h2>
+<div id="another" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Another</h2>
 </div>
 </div>
-<div id="chapter-two" class="section level1" number="2">
-<h1><span class="header-section-number">2</span> Chapter TWO</h1>
+<div id="chapter-two" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Chapter TWO</h1>
 <p>Or perhaps you would like to highlight the highest value from the
 <code>hp</code> column in the description? The maximum, i.e.,
 <code>x</code> horsepower, is observed in a car in row

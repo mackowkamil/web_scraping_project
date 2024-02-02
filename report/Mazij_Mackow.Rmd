@@ -29,31 +29,41 @@ opts_knit$set(width = 80)
 
 To use this template, install the package: `install.packages("rmdformats")`
 
-# Chapter ONE
+# Introduction
 
-To assess the project, please submit the following files - of course, compress them beforehand (you can use, for example, the free 7-zip):
+In response to the increasing need for personalized nutrition, our project focuses on developing a practical solution for individuals with dietary restrictions. Using web scraping techniques, we gather a diverse range of recipes from `https://kuchnialidla.pl/przepisy/dania-glowne` and filter out those containing restricted products.
 
--   `scraper.R` file and other files that were used to scrape data (e.g., `function.R`) or to clean them (`munging.R`).
--   The data obtained through web scraping (uncleaned) as well as the data that have been prepared for writing the report. These data should be saved in `CSV` files.
--   `Surname.Rmd` file, which was the basis for preparing the report.
--   An `HTML` file that was created by compiling the Rmd file.
--   Note: everything must be done in R.
+To get the restricted products we also scraped a website containing dietary information: `https://www.tabelakalorii.net/zywnosc`. As the lists were not matching fully with all the ingredients used in our recipes, we had to add some keywords manually to the set of restricted products.
 
-Remember to load the necessary packages at the very beginning. Write R codes in so-called chunks. To add them, you can use the shortcut: CTRL+ALT+I
+The outcome of our scraper is a data frame of "allowed" recipes, ensuring compliance with specific dietary needs. Our script then identifies common ingredients across these recipes to create a streamlined and personalized shopping list. This approach not only caters to individual dietary preferences but also enhances the efficiency of meal planning, offering a user-friendly solution at the intersection of technology and nutrition.
 
-```{r}
-# library(tidyverse)
-# elon <- read_csv("dane/twitterElonMusk.csv")
-# head(elon)
+# Web scraping methodology
+
+The web scraping part of our project was executed through the dedicated script **scraper.R**. In its initial phase, the script gathered URLs for the recipes sub-domains. Focusing exclusively on main dishes for the current project scope, we navigated through these links to compile an exhaustive data set. Following the acquisition of main dish link addresses, we proceeded to extract essential details such as ingredients and macro information (which wasn't used in this project but may be useful in case of a future further development).
+
+Subsequently, our script extended its capabilities to scrape information on restricted products from another website. Additionally, we manually incorporated some products. It's noteworthy that the manually added lists did not align perfectly with all the ingredients utilized in our recipes.
+
+Throughout this process, GET() served as the main function for retrieving information, ensuring efficiency and accuracy in data extraction. The dual approach of automated scraping and manual supplementation contributes to the robustness of our data set, providing a solid foundation for analysis and potential expansion.
+
+```{r, include=FALSE}
+recipes <- read.csv("../output/recipes.csv", sep = ";", stringsAsFactors = FALSE)
+dairy_excluded_products_test <- read.csv("../output/dairy_excluded_products.csv", stringsAsFactors = FALSE)
+recipes$Ingredients <- lapply(recipes$Ingredients, function(cell) {
+  cleaned_cell <- gsub("c\\(|\\)", "", cell)
+  unname(unlist(strsplit(cleaned_cell, ', ')))
+})
 ```
 
-Let's creat a chart.
-
+First 3 dishes of our scraped **recipes** data frame:
 ```{r}
-# kable(mtcars[1:5, ])
-# ggplot(mtcars, aes(x = mpg, y = qsec)) + theme_bw() +
-#    geom_point(size = 4)
+head(recipes$Name, 3)
 ```
+
+And respective 3 ingredients lists:
+```{r}
+head(recipes$Ingredients, 3)
+```
+
 
 ## Subchapter
 
