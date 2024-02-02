@@ -1,0 +1,93 @@
+---
+title: "Shopping list for people with dietry restrictions"
+author: "Aleksandra Mazij, Kamil Maćków"
+date: "`r format(Sys.time(), '%m/%d/%Y %X')`"
+output:
+  rmdformats::readthedown:
+    highlight: kate
+    number_sections: true
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+## Global options
+library(knitr)
+library(rmdformats)
+library(formatR)
+opts_chunk$set(echo = TRUE, 
+               cache = FALSE,
+               prompt = FALSE,
+               tidy = TRUE,
+               comment = NA,
+               message = FALSE,
+               warning = FALSE,
+               fig.width = 7.4,
+               fig.height = 4.7,
+               fig.align = "center")
+opts_knit$set(width = 80)
+```
+
+To use this template, install the package: `install.packages("rmdformats")`
+
+# Introduction
+
+In response to the increasing need for personalized nutrition, our project focuses on developing a practical solution for individuals with dietary restrictions. Using web scraping techniques, we gather a diverse range of recipes from `https://kuchnialidla.pl/przepisy/dania-glowne` and filter out those containing restricted products.
+
+To get the restricted products we also scraped a website containing dietary information: `https://www.tabelakalorii.net/zywnosc`. As the lists were not matching fully with all the ingredients used in our recipes, we had to add some keywords manually to the set of restricted products.
+
+The outcome of our scraper is a data frame of "allowed" recipes, ensuring compliance with specific dietary needs. Our script then identifies common ingredients across these recipes to create a streamlined and personalized shopping list. This approach not only caters to individual dietary preferences but also enhances the efficiency of meal planning, offering a user-friendly solution at the intersection of technology and nutrition.
+
+# Web scraping methodology
+
+The web scraping part of our project was executed through the dedicated script **scraper.R**. In its initial phase, the script gathered URLs for the recipes sub-domains. Focusing exclusively on main dishes for the current project scope, we navigated through these links to compile an exhaustive data set. Following the acquisition of main dish link addresses, we proceeded to extract essential details such as ingredients and macro information (which wasn't used in this project but may be useful in case of a future further development).
+
+Subsequently, our script extended its capabilities to scrape information on restricted products from another website. Additionally, we manually incorporated some products. It's noteworthy that the manually added lists did not align perfectly with all the ingredients utilized in our recipes.
+
+Throughout this process, GET() served as the main function for retrieving information, ensuring efficiency and accuracy in data extraction. The dual approach of automated scraping and manual supplementation contributes to the robustness of our data set, providing a solid foundation for analysis and potential expansion.
+
+```{r, include=FALSE}
+recipes <- read.csv("../output/recipes.csv", sep = ";", stringsAsFactors = FALSE)
+dairy_excluded_products_test <- read.csv("../output/dairy_excluded_products.csv", stringsAsFactors = FALSE)
+recipes$Ingredients <- lapply(recipes$Ingredients, function(cell) {
+  cleaned_cell <- gsub("c\\(|\\)", "", cell)
+  unname(unlist(strsplit(cleaned_cell, ', ')))
+})
+```
+
+First 3 dishes of our scraped **recipes** data frame:
+```{r}
+head(recipes$Name, 3)
+```
+
+And respective 3 ingredients lists:
+```{r}
+head(recipes$Ingredients, 3)
+```
+
+
+## Subchapter
+
+Mark up text:
+
+-   italic type: *this is the first*, and this is the *second award*.
+-   bold type: **this is the first**, and this is the **second award**.
+
+### Some bullet points
+
+List
+
+-   item 1
+-   item 2
+-   item 3
+
+Or maybe this?
+
+1.  point 1
+2.  point 2
+3.  point 3
+
+## Another
+
+# Chapter TWO
+
+Or perhaps you would like to highlight the highest value from the `hp` column in the description? The maximum, i.e., `x` horsepower, is observed in a car in row `y`.
