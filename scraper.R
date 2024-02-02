@@ -86,6 +86,9 @@ for (i in 1:length(links)) {
   )
 }
 
+# get rid of the rows with empty "Ingredients"
+recipes <- recipes[sapply(recipes$Ingredients, function(x) length(x) > 0),]
+
 # this function returns all excluded products for given diet restriction
 download_exluded_products_for_diet <- function(group_of_products_to_avoid) {
   # iterate over group of products to avoid
@@ -126,3 +129,10 @@ dairy_excluded_products <- download_exluded_products_for_diet(dairy_avoid_list)
 # add some products to avoid that were not present in the tabelakalorii.net
 vege_excluded_products <- c(vege_excluded_products, "mięso mielone wołowe", "mięso mielone wieprzowe") 
 vegan_excluded_products <- c(vegan_excluded_products, "mięso mielone wołowe", "mięso mielone wieprzowe")
+dairy_excluded_products <- c(dairy_excluded_products, "śmietanka kremówka 30%", "parmezan tarty", "twaróg z czosnkiem i koprem",
+                             "twaróg z czosnkiem i koprem", "śmietana kwaśna", "śmietana 30%", "ser feta", "parmiggiano reggiano",
+                             "ser górski", "ser ricotta", "ser pecorino", "śmietana 18%", "ser żółty", "burrata", "mozzarella, tarta",
+                             "ser twaróg tłusty", "jogurt naturalny", "ser la brique", "skyr naturalny", "ser gorgonzola", "ser cheddar",
+                             "sos tzatziki", "serek grani", "grana padano", "ser graviera, tarty", "śmietana 12%", "ser scamorza", "śmietana 22%",
+                             "ser mascarpone", "ser żółty w plastrach", "ser halloumi", "ser gruyere", "ser maślany, plastry", "cremé fraîche",
+                             "śmietana 36%", "ser brie", "ser pont", "ser chaource","ser kolumb", "ser twaróg półtłusty")
